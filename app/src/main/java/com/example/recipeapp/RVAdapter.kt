@@ -1,11 +1,13 @@
 package com.example.recipeapp
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import java.util.ArrayList
 
@@ -18,8 +20,8 @@ class RVAdapter(private val rv: ArrayList<recipe.dat>, val cont: Context): Recyc
     }
 
     override fun onBindViewHolder(holder: RVAdapter.ItemViewHolder, position: Int) {
-        val rvv = rv[position]
-        val rvvd= rv[position]
+        val rvv = rv[position].title
+        val rvvd= rv[position].author
         holder.itemView.apply {
             var rvlisting= findViewById<CardView>(R.id.rvlisting)
             var ct= findViewById<TextView>(R.id.cardtitle)
@@ -27,7 +29,12 @@ class RVAdapter(private val rv: ArrayList<recipe.dat>, val cont: Context): Recyc
             ct.text = rvv.toString()
             cd.text = rvvd.toString()
             rvlisting.setOnClickListener {
-                alert(,cont)
+
+                var intent = Intent(cont, view::class.java)
+                intent.putExtra("tit",rv[position].title)
+                intent.putExtra("ing",rv[position].ingredients)
+                intent.putExtra("ins",rv[position].instructions)
+                context.startActivity(intent)
 
             }
 

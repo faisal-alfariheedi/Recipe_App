@@ -1,13 +1,19 @@
 package com.example.recipeapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.ArrayList
 
 class MainActivity2 : AppCompatActivity() {
@@ -20,6 +26,33 @@ class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
+        init()
+        but.setOnClickListener{
+            intent = Intent(applicationContext, MainActivity::class.java)
+            startActivity(intent)
+
+        }
+        if (apif != null) {
+            apif.getRecipies()?.enqueue(object : Callback<List<recipe.dat>> {
+                override fun onResponse(call: Call<List<recipe.dat>>, response: Response<List<recipe.dat>>) {
+                    Log.d("message body", response.body()!![1].title!!)
+                    for (i in response.body()!!) {
+
+                        res.add(i)
+
+                    }
+                    rv.adapter?.notifyDataSetChanged()
+                    wait(false)
+
+                }
+
+                override fun onFailure(call: Call<List<recipe.dat>>, t: Throwable) {
+
+                    wait(false)
+                    Toast.makeText(applicationContext, t.message, Toast.LENGTH_SHORT).show();
+                }
+            })
+        }
 
     }
     fun init() {
