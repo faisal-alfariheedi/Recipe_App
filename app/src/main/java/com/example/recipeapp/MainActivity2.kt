@@ -11,6 +11,9 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,6 +26,7 @@ class MainActivity2 : AppCompatActivity() {
     var res: ArrayList<recipe.dat> = arrayListOf()
     lateinit var prog: ProgressBar
     lateinit var tvw: TextView
+    lateinit var db:RecipeDao
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
@@ -36,13 +40,16 @@ class MainActivity2 : AppCompatActivity() {
             apif.getRecipies()?.enqueue(object : Callback<List<recipe.dat>> {
                 override fun onResponse(call: Call<List<recipe.dat>>, response: Response<List<recipe.dat>>) {
                     Log.d("message body", response.body()!![1].title!!)
-                    for (i in response.body()!!) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        var t = response.body()
+                        if (t != null) {
+                            db.addall(t)
+                        }
 
-                        res.add(i)
-
+                        res = db.getall() as ArrayList<recipe.dat>
+                        runOnUiThread{rv.adapter = RVAdapter(res, this@MainActivity2)
+                        wait(false)}
                     }
-                    rv.adapter?.notifyDataSetChanged()
-                    wait(false)
 
                 }
 
@@ -56,6 +63,7 @@ class MainActivity2 : AppCompatActivity() {
 
     }
     fun init() {
+        db=RecipeDB.getInstance(this).RecipeDao()
         but = findViewById(R.id.addres)
         rv = findViewById(R.id.rvma)
         rv.adapter = RVAdapter(res,this)

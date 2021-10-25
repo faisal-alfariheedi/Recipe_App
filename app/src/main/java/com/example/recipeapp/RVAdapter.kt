@@ -31,9 +31,7 @@ class RVAdapter(private val rv: ArrayList<recipe.dat>, val cont: Context): Recyc
             rvlisting.setOnClickListener {
 
                 var intent = Intent(cont, view::class.java)
-                intent.putExtra("tit",rv[position].title)
-                intent.putExtra("ing",rv[position].ingredients)
-                intent.putExtra("ins",rv[position].instructions)
+                intent.putExtra("tit",rv[position].id)
                 context.startActivity(intent)
 
             }
